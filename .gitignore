@@ -1,0 +1,10 @@
+build/game
+build/.cmake/
+build/Testing
+build/CMakeFiles/
+build/*.txt
+build/*.cmake
+build/*.tcl
+build/*.json
+Makefile
+.vscode/
