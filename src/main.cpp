@@ -30,7 +30,7 @@ int main(int argc, char **argv)
     Triangle triangle(vertices);
     Triangle triangle2(vertices2);
     Texture texture("./wall.jpg");
-    Texture texture2("./discord.png");
+    Texture texture2("./test.jpg");
 
 
     Shader shader("./shader.vs", "./shader.fs");
