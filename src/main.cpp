@@ -28,9 +28,9 @@ int main(int argc, char **argv)
     };
     std::array<float, 24> vertices2 = {
         // positions        // colors
-         0.3f, -0.3f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,    // bottom right
-        -0.3f, -0.3f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,  // bottom left
-         0.0f,  0.3f, 0.0f, 1.0f, 0.0f, 1.0f, 0.5f, 1.0f,  // top
+         0.6f, -0.6f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,    // bottom right
+        -0.6f, -0.6f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,  // bottom left
+         0.0f,  0.6f, 0.0f, 1.0f, 0.0f, 1.0f, 0.5f, 1.0f,  // top
     };
     Triangle triangle(vertices);
     Triangle triangle2(vertices2);
@@ -39,16 +39,22 @@ int main(int argc, char **argv)
 
 
     Shader shader("./shader.vs", "./shader.fs");
+    Shader shader2("./shader.vs", "./shader.fs");
     glm::mat4 trans = glm::mat4(1.0f);
     trans = glm::rotate(trans, glm::radians(0.0f), glm::vec3(0.0, 0.0, 1.0));
-    trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5)); 
+    trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
+    auto trans2 = trans;
     while (!window.shouldClose() && Ruru::Key::isPressed(256) != GLFW_PRESS)
     {
         window.clear();
 
+        trans = glm::rotate(trans, glm::radians(0.3f), glm::vec3(0.0, 0.0, 1.0));
         shader.setMat4("transform", trans);
         shader.use();
         triangle.draw(shader, texture);
+        trans2 = glm::rotate(trans2, glm::radians(-0.3f), glm::vec3(0.0, 0.0, 1.0));
+        shader2.setMat4("transform", trans2);
+        shader2.use();
         triangle2.draw(shader, texture2);
         if (Ruru::Key::isPressed(GLFW_KEY_RIGHT) == GLFW_PRESS)
         {
