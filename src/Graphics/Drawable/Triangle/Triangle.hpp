@@ -46,10 +46,9 @@ public:
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices.data(), GL_STATIC_DRAW);
 
-        // position attribute
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
         glEnableVertexAttribArray(0);
-        // color attribute
+
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float)));
         glEnableVertexAttribArray(1);
 
@@ -74,8 +73,19 @@ public:
     {
         // todo: check last used shader id with static and use it if it is not the same ? (performance improvement)
         shader.use();
+
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
+    }
+    void draw(Shader &shader, Texture &texture) const override
+    {
+        // todo: check last used shader id with static and use it if it is not the same ? (performance improvement)
+        shader.use();
+        texture.bind();
+
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        texture.unbind();
     }
 
     template <typename T>

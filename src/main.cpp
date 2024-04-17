@@ -21,8 +21,16 @@ int main(int argc, char **argv)
         -0.3f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,  // bottom left
          0.0f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.5f, 1.0f,  // top
     };
+    std::array<float, 24> vertices2 = {
+        // positions        // colors
+         0.3f, -0.3f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,    // bottom right
+        -0.3f, -0.3f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,  // bottom left
+         0.0f,  0.3f, 0.0f, 1.0f, 0.0f, 1.0f, 0.5f, 1.0f,  // top
+    };
     Triangle triangle(vertices);
+    Triangle triangle2(vertices2);
     Texture texture("./wall.jpg");
+    Texture texture2("./discord.png");
 
 
     Shader shader("./shader.vs", "./shader.fs");
@@ -30,7 +38,8 @@ int main(int argc, char **argv)
     {
         window.clear();
         shader.use();
-        triangle.draw(shader);
+        triangle.draw(shader, texture);
+        triangle2.draw(shader, texture2);
         if (Ruru::Key::isPressed(GLFW_KEY_RIGHT) == GLFW_PRESS)
         {
             triangle[0] += 0.01f;

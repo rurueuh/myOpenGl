@@ -3,6 +3,7 @@
 #include <iostream>
 #include <Vector2.hpp>
 #include <Shader.hpp>
+#include <Texture.hpp>
 
 class Drawable
 {
@@ -12,6 +13,7 @@ public:
 
     virtual void draw() const = 0;
     virtual void draw(Shader& shader) const = 0;
+    virtual void draw(Shader& shader, Texture& texture) const = 0;
 
     virtual void move(const Vector2<float>& offset) = 0;
 
