@@ -35,7 +35,7 @@ int main(int argc, char **argv)
     Triangle triangle(vertices);
     Triangle triangle2(vertices2);
     Texture texture("./wall.jpg");
-    Texture texture2("./test.jpg");
+    Texture texture2("./discord.png");
 
 
     Shader shader("./shader.vs", "./shader.fs");
@@ -45,7 +45,6 @@ int main(int argc, char **argv)
     while (!window.shouldClose() && Ruru::Key::isPressed(256) != GLFW_PRESS)
     {
         window.clear();
-        trans = glm::rotate(trans, glm::radians(0.5f), glm::vec3(1.0, 1.0, 1.0));
 
         shader.setMat4("transform", trans);
         shader.use();
