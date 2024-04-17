@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <bits/stdc++.h>
 
-#include "Window/Window.hpp"
-#include "Key/Key.hpp"
+#include "Window.hpp"
+#include "Key.hpp"
 #include "Color.hpp"
 #include "Triangle.hpp"
 #include "Square.hpp"

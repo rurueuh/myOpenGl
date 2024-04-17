@@ -4,8 +4,9 @@
 #include <GLFW/glfw3.h>
 #include "Color.hpp"
 #include "Shader.hpp"
+#include "Drawable.hpp"
 
-class Triangle
+class Triangle : public Drawable
 {
 public:
     Triangle(std::array<float, 24> vertices)
@@ -63,18 +64,34 @@ public:
         glDeleteShader(fragmentShader);
     }
 
-    void draw()
+    void draw() const override 
     {
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
     }
-    void draw(Shader &shader)
+    void draw(Shader &shader) const override
     {
         // todo: check last used shader id with static and use it if it is not the same ? (performance improvement)
         shader.use();
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
+    }
+
+    template <typename T>
+    float at(T index) const
+    {
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        float *data = (float *)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY);
+        float result = data[index];
+        glUnmapBuffer(GL_ARRAY_BUFFER);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        return result;
+    }
+
+    void move(const Vector2<float> &offset) override
+    {
+        position += offset;
     }
 
     ~Triangle()
@@ -84,7 +101,8 @@ public:
         glDeleteProgram(shaderProgram);
     }
 
-    float &operator[](int index)
+    template <typename T>
+    float &operator[](T index)
     {
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
         float *data = (float *)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
