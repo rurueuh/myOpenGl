@@ -35,6 +35,9 @@ namespace Ruru {
 
         operator GLFWwindow *() const { return window; }
 
+        uint16_t getWidth() const { return width; }
+        uint16_t getHeight() const { return height; }
+
         class Exception : public std::runtime_error {
         public:
             Exception(const std::string &msg) : std::runtime_error(msg) {}

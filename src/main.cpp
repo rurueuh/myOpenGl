@@ -14,48 +14,48 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-
 int main(int argc, char **argv)
 {
     std::srand(std::time(NULL));
     Ruru::Window window(1920, 1080, "Hello World");
-    window.setFramerateLimit(240);
+    window.setFramerateLimit(60);
     std::array<float, 24> vertices = {
         // positions        // colors
-         0.3f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,    // bottom right
-        -0.3f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,  // bottom left
-         0.0f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.5f, 1.0f,  // top
+        0.3f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,  // bottom right
+        -0.3f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // bottom left
+        0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.5f, 1.0f,   // top
     };
     std::array<float, 24> vertices2 = {
         // positions        // colors
-         0.6f, -0.6f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,    // bottom right
-        -0.6f, -0.6f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,  // bottom left
-         0.0f,  0.6f, 0.0f, 1.0f, 0.0f, 1.0f, 0.5f, 1.0f,  // top
+        0.3f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,  // bottom right
+        -0.3f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // bottom left
+        0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.5f, 1.0f,   // top
     };
     Triangle triangle(vertices);
     Triangle triangle2(vertices2);
     Texture texture("./wall.jpg");
     Texture texture2("./discord.png");
 
-
     Shader shader("./shader.vs", "./shader.fs");
     Shader shader2("./shader.vs", "./shader.fs");
-    glm::mat4 trans = glm::mat4(1.0f);
-    trans = glm::rotate(trans, glm::radians(0.0f), glm::vec3(0.0, 0.0, 1.0));
-    trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
-    auto trans2 = trans;
+
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    glm::mat4 view = glm::mat4(1.0f);
+    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+    glm::mat4 projection = glm::mat4(1.0f);
+    projection = glm::perspective(glm::radians(45.0f), (float)window.getWidth() / (float)window.getHeight(), 0.1f, 100.0f);
+
     while (!window.shouldClose() && Ruru::Key::isPressed(256) != GLFW_PRESS)
     {
         window.clear();
-
-        trans = glm::rotate(trans, glm::radians(0.3f), glm::vec3(0.0, 0.0, 1.0));
-        shader.setMat4("transform", trans);
+        model = glm::rotate(model, (float)glfwGetTime() * glm::radians(1.0f), glm::vec3(0.5f, 1.0f, 0.0f)); 
+        shader.setMat4("model", model);
+        shader.setMat4("view", view);
+        shader.setMat4("projection", projection);
         shader.use();
-        triangle.draw(shader, texture);
-        trans2 = glm::rotate(trans2, glm::radians(-0.3f), glm::vec3(0.0, 0.0, 1.0));
-        shader2.setMat4("transform", trans2);
-        shader2.use();
         triangle2.draw(shader, texture2);
+        triangle.draw(shader, texture);
         if (Ruru::Key::isPressed(GLFW_KEY_RIGHT) == GLFW_PRESS)
         {
             triangle[0] += 0.01f;
@@ -68,12 +68,14 @@ int main(int argc, char **argv)
             triangle[8] -= 0.01f;
             triangle[16] -= 0.01f;
         }
-        if (Ruru::Key::isPressed(GLFW_KEY_UP) == true) {
+        if (Ruru::Key::isPressed(GLFW_KEY_UP) == true)
+        {
             triangle[1] += 0.01f;
             triangle[9] += 0.01f;
             triangle[17] += 0.01f;
         }
-        if (Ruru::Key::isPressed(GLFW_KEY_DOWN) == true) {
+        if (Ruru::Key::isPressed(GLFW_KEY_DOWN) == true)
+        {
             triangle[1] -= 0.01f;
             triangle[9] -= 0.01f;
             triangle[17] -= 0.01f;
