@@ -24,6 +24,7 @@ void Ruru::Window::initWindow()
     if (glewInit() != GLEW_OK) {
         throw Exception("Failed to initialize GLEW");
     }
+    glEnable(GL_DEPTH_TEST);
 }
 
 Ruru::Window::Window(uint16_t width, uint16_t height, const char *title)

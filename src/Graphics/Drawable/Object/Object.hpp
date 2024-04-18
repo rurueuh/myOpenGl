@@ -5,11 +5,14 @@
 #include "Color.hpp"
 #include "Shader.hpp"
 #include "Drawable.hpp"
+#include <vector>
 
-class Triangle : public Drawable
+constexpr int DIFF = 8;
+
+class Object : public Drawable
 {
 public:
-    Triangle(std::array<float, 24> vertices)
+    Object(std::vector<float> vertices) : _vertices(vertices)
     {
         const char *vertexShaderSource = "#version 330 core\n"
                                          "layout (location = 0) in vec3 aPos;\n"
@@ -44,15 +47,15 @@ public:
         glBindVertexArray(VAO);
 
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices.data(), GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(float), _vertices.data(), GL_STATIC_DRAW);
 
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, DIFF * sizeof(float), (void *)0);
         glEnableVertexAttribArray(0);
 
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float)));
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, DIFF * sizeof(float), (void *)(3 * sizeof(float)));
         glEnableVertexAttribArray(1);
 
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6 * sizeof(float)));
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, DIFF * sizeof(float), (void *)(6 * sizeof(float)));
         glEnableVertexAttribArray(2);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -63,18 +66,11 @@ public:
         glDeleteShader(fragmentShader);
     }
 
-    ~Triangle()
-    {
-        glDeleteVertexArrays(1, &VAO);
-        glDeleteBuffers(1, &VBO);
-        glDeleteProgram(shaderProgram);
-    }
-
     void draw() const override 
     {
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawArrays(GL_TRIANGLES, 0, _vertices.size() / DIFF);
     }
     void draw(Shader &shader) const override
     {
@@ -82,7 +78,7 @@ public:
         shader.use();
 
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawArrays(GL_TRIANGLES, 0, _vertices.size() / DIFF);
     }
     void draw(Shader &shader, Texture &texture) const override
     {
@@ -91,7 +87,7 @@ public:
         texture.bind();
 
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawArrays(GL_TRIANGLES, 0, _vertices.size() / DIFF);
         texture.unbind();
     }
 
@@ -111,6 +107,12 @@ public:
         position += offset;
     }
 
+    ~Object()
+    {
+        glDeleteVertexArrays(1, &VAO);
+        glDeleteBuffers(1, &VBO);
+        glDeleteProgram(shaderProgram);
+    }
 
     template <typename T>
     float &operator[](T index)
@@ -127,4 +129,5 @@ public:
 private:
     unsigned int shaderProgram;
     unsigned int VBO, VAO;
+    std::vector<float> _vertices;
 };

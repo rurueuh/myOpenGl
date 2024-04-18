@@ -27,10 +27,13 @@ namespace Ruru {
         }
         void setFramerateLimit(uint32_t limit) { frameRateLimit = limit; }
 
-        void clear() { glClear(GL_COLOR_BUFFER_BIT); }
+        void clear() {
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        }
         void clear(const Ruru::Color &color) {
             glClearColor(color.getR() / 255.0f, color.getG() / 255.0f, color.getB() / 255.0f, color.getA() / 255.0f);
-            glClear(GL_COLOR_BUFFER_BIT);
+
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         }
 
         operator GLFWwindow *() const { return window; }
