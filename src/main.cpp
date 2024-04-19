@@ -74,13 +74,6 @@ int main(int argc, char **argv)
         0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f,
         -0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
         -0.5f, 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f};
-    std::vector<glm::vec3> cubesPos = {};
-    for (int i = 0; i < 1000; i++)
-    {
-        // between -100 and 100
-        cubesPos.push_back(glm::vec3((std::rand() % 200 - 100) / 10.0f, (std::rand() % 200 - 100) / 10.0f, (std::rand() % 200 - 100) / 10.0f));
-    }
-    cubesPos.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
     Object object(verticesCube);
     Triangle triangle(vertices);
     Triangle triangle2(vertices2);
@@ -91,43 +84,48 @@ int main(int argc, char **argv)
     Shader shader2("./shader.vs", "./shader.fs");
 
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::rotate(model, glm::radians(-75.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
     glm::mat4 view = glm::mat4(1.0f);
-    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+    view = glm::translate(view, glm::vec3(0.0f, 0.0f, 0.0f));
     glm::mat4 projection = glm::mat4(1.0f);
     projection = glm::perspective(glm::radians(45.0f), (float)window.getWidth() / (float)window.getHeight(), 0.1f, 100.0f);
+
+    // CAMERA
+    glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+    glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
+    glm::vec3 cameraDirection = glm::normalize(cameraPos - cameraTarget);
+    glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+    glm::vec3 cameraRight = glm::normalize(glm::cross(up, cameraDirection));
+    glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+    glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
 
     while (!window.shouldClose() && Ruru::Key::isPressed(256) != GLFW_PRESS)
     {
         window.clear();
         shader.setMat4("model", model);
+        view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
         shader.setMat4("view", view);
         shader.setMat4("projection", projection);
         shader.use();
+        object.draw(shader, texture);
         // triangle2.draw(shader, texture2);
         // triangle.draw(shader, texture);
-        auto oldModel = model;
-        for (unsigned int i = 0; i < (cubesPos.size()); i++)
-        {
-            model = glm::translate(model, cubesPos[i]);
-            // model move random cube
-            shader.setMat4("model", model);
-            object.draw(shader, texture);
-            model = oldModel;
-        }
-        model = oldModel;
-        shader.setMat4("model", model);
+        const float cameraSpeed = 0.05f;
         if (Ruru::Key::isPressed(GLFW_KEY_RIGHT) == GLFW_PRESS)
         {
-            triangle[0] += 0.01f;
-            triangle[8] += 0.01f;
-            triangle[16] += 0.01f;
+            cameraPos += cameraSpeed * cameraRight;
         }
         if (Ruru::Key::isPressed(GLFW_KEY_LEFT) == GLFW_PRESS)
         {
-            triangle[0] -= 0.01f;
-            triangle[8] -= 0.01f;
-            triangle[16] -= 0.01f;
+            cameraPos -= cameraSpeed * cameraRight;
+        }
+        if (Ruru::Key::isPressed(GLFW_KEY_UP) == GLFW_PRESS)
+        {
+            cameraPos += cameraSpeed * cameraFront;
+        }
+        if (Ruru::Key::isPressed(GLFW_KEY_DOWN) == GLFW_PRESS)
+        {
+            cameraPos -= cameraSpeed * cameraFront;
         }
         static bool autoRotate = false;
         if (Ruru::Key::isPressed(GLFW_KEY_SPACE) == GLFW_PRESS)
