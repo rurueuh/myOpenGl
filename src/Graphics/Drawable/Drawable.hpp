@@ -15,10 +15,10 @@ public:
     virtual void draw(Shader& shader) const = 0;
     virtual void draw(Shader& shader, Texture& texture) const = 0;
 
-    virtual void move(const Vector2<float>& offset) = 0;
+    virtual void move(const Vector3<float>& offset) = 0;
 
 protected:
-    Vector2<float> position = {0.0f, 0.0f};
+    Vector3<float> position = {0.0f, 0.0f, 0.0f};
     Vector2<float> scale = {1.0f, 1.0f};
     float rotation = 0.0f;
 

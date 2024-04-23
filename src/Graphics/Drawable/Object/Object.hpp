@@ -66,7 +66,7 @@ public:
         glDeleteShader(fragmentShader);
     }
 
-    void draw() const override 
+    void draw() const override
     {
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
@@ -102,9 +102,39 @@ public:
         return result;
     }
 
-    void move(const Vector2<float> &offset) override
+    bool pointIsInObject(const Vector3<float> &point) const
+    {
+        auto pos = this->position;
+
+        auto point1 = _vertices[0] + pos.x;
+        auto point2 = _vertices[0 + 1] - pos.y;
+        auto point3 = _vertices[0 + 2] - pos.z;
+        if (point.z >= point3 && point.z <= point3 + 1) {
+            if (point.x >= point1 && point.x <= point1 + 1)
+            {
+                if (point.y >= point2 && point.y <= point2 + 1)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    void move(const Vector3<float> &offset) override
     {
         position += offset;
+
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        float *data = (float *)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
+        for (int i = 0; i < _vertices.size(); i += DIFF)
+        {
+            data[i] += offset.x;
+            data[i + 1] += offset.z;
+            data[i + 2] += offset.y;
+        }
+        glUnmapBuffer(GL_ARRAY_BUFFER);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
     ~Object()
@@ -125,6 +155,8 @@ public:
         return result;
     }
     operator unsigned int() const { return VAO; }
+
+    std::vector<float> &getVertices() { return _vertices; }
 
 private:
     unsigned int shaderProgram;

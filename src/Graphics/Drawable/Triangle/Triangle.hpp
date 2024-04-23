@@ -106,9 +106,9 @@ public:
         return result;
     }
 
-    void move(const Vector2<float> &offset) override
+    void move(const Vector3<float> &offset) override
     {
-        position += offset;
+        // position += offset;
     }
 
 

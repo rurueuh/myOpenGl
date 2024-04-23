@@ -25,7 +25,17 @@ namespace Ruru {
             glfwSetTime(0);
             return time;
         }
+        static double getDT() {
+            static auto lastTime = std::chrono::high_resolution_clock::now();
+            auto currentTime = std::chrono::high_resolution_clock::now();
+            auto dt = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - lastTime).count();
+            lastTime = currentTime;
+            return dt;
+        }
         void setFramerateLimit(uint32_t limit) { frameRateLimit = limit; }
+        void setCursorVisible(bool visible = true) {
+            glfwSetInputMode(window, GLFW_CURSOR, visible ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
+        }
 
         void clear() {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
